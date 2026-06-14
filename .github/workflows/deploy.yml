@@ -34,6 +34,34 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Fetch note RSS and save as JSON
+        run: |
+          curl -sL \
+            -H "User-Agent: Mozilla/5.0 (compatible; portfolio-build/1.0)" \
+            "https://note.com/fbug887/rss" \
+            -o /tmp/note_rss.xml
+          node -e "
+            const fs = require('fs');
+            const xml = fs.readFileSync('/tmp/note_rss.xml', 'utf8');
+            const items = [...xml.matchAll(/<item>([\s\S]*?)<\/item>/g)];
+            const articles = items.slice(0, 6).map(m => {
+              const c = m[1];
+              const title =
+                (c.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/) ||
+                 c.match(/<title>([\s\S]*?)<\/title>/) || [])[1] || '';
+              const url =
+                (c.match(/<link>([\s\S]*?)<\/link>/) ||
+                 c.match(/<guid[^>]*>([\s\S]*?)<\/guid>/) || [])[1] || '';
+              const date = (c.match(/<pubDate>([\s\S]*?)<\/pubDate>/) || [])[1] || '';
+              const thumbnail = (c.match(/<media:thumbnail>(https?:\/\/[^<]+)<\/media:thumbnail>/) || [])[1] || '';
+              const dateStr = date ? new Date(date).toLocaleDateString('ja-JP') : '';
+              return { title: title.trim(), url: url.trim(), date: dateStr, thumbnail };
+            }).filter(a => a.title && a.url);
+            fs.mkdirSync('public', { recursive: true });
+            fs.writeFileSync('public/note-articles.json', JSON.stringify(articles));
+            console.log('Fetched', articles.length, 'articles');
+          "
+
       - name: Build
         run: npm run build
 

@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 type Article = {
   title: string;
   url: string;
@@ -5,38 +8,39 @@ type Article = {
   thumbnail: string;
 };
 
-async function fetchNoteArticles(): Promise<Article[]> {
-  const NOTE_USERNAME = "fbug887";
+async function getArticles(): Promise<Article[]> {
+  // GitHub Actions でビルド時に生成される JSON を優先して読む
+  const jsonPath = path.join(process.cwd(), "public", "note-articles.json");
+  if (fs.existsSync(jsonPath)) {
+    try {
+      const data = fs.readFileSync(jsonPath, "utf8");
+      return JSON.parse(data) as Article[];
+    } catch {
+      // fall through to RSS fetch
+    }
+  }
+
+  // ローカル開発時は RSS を直接フェッチ
   try {
-    const res = await fetch(`https://note.com/${NOTE_USERNAME}/rss`, {
+    const res = await fetch("https://note.com/fbug887/rss", {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; portfolio-build/1.0)" },
       cache: "no-store",
     });
     if (!res.ok) return [];
     const text = await res.text();
     const items = [...text.matchAll(/<item>([\s\S]*?)<\/item>/g)];
     return items.slice(0, 6).map((m) => {
-      const content = m[1];
-
+      const c = m[1];
       const title =
-        content.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/)?.[1] ??
-        content.match(/<title>([\s\S]*?)<\/title>/)?.[1] ??
-        "";
-
+        c.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/)?.[1] ??
+        c.match(/<title>([\s\S]*?)<\/title>/)?.[1] ?? "";
       const url =
-        content.match(/<link>([\s\S]*?)<\/link>/)?.[1] ??
-        content.match(/<guid[^>]*>([\s\S]*?)<\/guid>/)?.[1] ??
-        "";
-
-      const date = content.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1] ?? "";
-      const dateStr = date ? new Date(date).toLocaleDateString("ja-JP") : "";
-
-      // note RSS: <media:thumbnail>https://...</media:thumbnail>
+        c.match(/<link>([\s\S]*?)<\/link>/)?.[1] ??
+        c.match(/<guid[^>]*>([\s\S]*?)<\/guid>/)?.[1] ?? "";
+      const date = c.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1] ?? "";
       const thumbnail =
-        content.match(/<media:thumbnail>(https?:\/\/[^<]+)<\/media:thumbnail>/)?.[1] ??
-        content.match(/<media:thumbnail[^>]+url="([^"]+)"/)?.[1] ??
-        content.match(/<enclosure[^>]+url="([^"]+)"/)?.[1] ??
-        "";
-
+        c.match(/<media:thumbnail>(https?:\/\/[^<]+)<\/media:thumbnail>/)?.[1] ?? "";
+      const dateStr = date ? new Date(date).toLocaleDateString("ja-JP") : "";
       return { title: title.trim(), url: url.trim(), date: dateStr, thumbnail };
     }).filter((a) => a.title && a.url);
   } catch {
@@ -45,7 +49,7 @@ async function fetchNoteArticles(): Promise<Article[]> {
 }
 
 export default async function Writing() {
-  const articles = await fetchNoteArticles();
+  const articles = await getArticles();
 
   return (
     <section id="writing" className="py-28 px-6 max-w-5xl mx-auto">
@@ -86,7 +90,6 @@ export default async function Writing() {
               rel="noopener noreferrer"
               className="tech-card rounded-2xl overflow-hidden group flex flex-col"
             >
-              {/* Thumbnail */}
               <div className="relative w-full aspect-[16/9] bg-[#111927] overflow-hidden">
                 {a.thumbnail ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
@@ -100,11 +103,8 @@ export default async function Writing() {
                     <span className="text-3xl opacity-20">✍</span>
                   </div>
                 )}
-                {/* Overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[#080c14]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
-
-              {/* Content */}
               <div className="p-4 flex flex-col flex-1">
                 <p className="text-sm font-medium text-[#e8f0fe] leading-snug mb-3 group-hover:text-[#00d4ff] transition-colors duration-200 line-clamp-2">
                   {a.title}
