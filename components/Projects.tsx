@@ -41,8 +41,8 @@ const projects: Project[] = [
     role: "サブリーダー・後輩5名育成",
     highlight:
       "数千万件規模の Redshift バッチ処理、Queue 管理による非同期処理を実装。ベンダーとの仕様すり合わせ、後輩5名の育成を担当。",
-    tags: ["Java", "AWS Redshift", "S3", "Oracle", "Agile"],
-    accentTag: "AWS Redshift",
+    tags: ["Java", "AWS", "S3", "Oracle", "Agile"],
+    accentTag: "AWS",
   },
 ];
 

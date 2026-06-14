@@ -52,7 +52,6 @@ const categories: Category[] = [
       { name: "Tailwind CSS" },
       { name: "PostgreSQL" },
       { name: "Oracle" },
-      { name: "Redshift" },
     ],
   },
   {

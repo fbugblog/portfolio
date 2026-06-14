@@ -13,9 +13,6 @@ export default function Contact() {
           <h2 className="text-2xl font-bold text-[#e8f0fe] mb-4">
             Get in <span className="gradient-text">Touch</span>
           </h2>
-          <p className="text-sm text-[#7a9cc4] leading-relaxed mb-8">
-            データ基盤・AI 統合に関するご相談やお問い合わせはお気軽にどうぞ。
-          </p>
           <SocialLinks />
         </div>
 
