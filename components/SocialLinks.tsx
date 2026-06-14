@@ -3,7 +3,7 @@
 const socials = [
   { label: "GitHub", href: "https://github.com/fbugblog", color: "#e8f0fe" },
   { label: "note", href: "https://note.com/fbug887", color: "#00ff9d" },
-  { label: "LinkedIn", href: "https://linkedin.com/in/", color: "#00d4ff" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/%E4%BE%91%E7%9C%9F-%E8%97%A4%E7%94%B0-7ba30a3bb/", color: "#00d4ff" },
 ];
 
 export default function SocialLinks() {
