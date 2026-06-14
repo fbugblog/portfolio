@@ -30,12 +30,11 @@ async function fetchNoteArticles(): Promise<Article[]> {
       const date = content.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1] ?? "";
       const dateStr = date ? new Date(date).toLocaleDateString("ja-JP") : "";
 
-      // Try multiple thumbnail sources
+      // note RSS: <media:thumbnail>https://...</media:thumbnail>
       const thumbnail =
+        content.match(/<media:thumbnail>(https?:\/\/[^<]+)<\/media:thumbnail>/)?.[1] ??
         content.match(/<media:thumbnail[^>]+url="([^"]+)"/)?.[1] ??
         content.match(/<enclosure[^>]+url="([^"]+)"/)?.[1] ??
-        content.match(/<description>[^<]*<img[^>]+src="([^"]+)"/)?.[1] ??
-        content.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp)[^\s"'<>]*/i)?.[1] ??
         "";
 
       return { title: title.trim(), url: url.trim(), date: dateStr, thumbnail };
