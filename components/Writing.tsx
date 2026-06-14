@@ -2,6 +2,7 @@ type Article = {
   title: string;
   url: string;
   date: string;
+  thumbnail: string;
 };
 
 async function fetchNoteArticles(): Promise<Article[]> {
@@ -13,20 +14,31 @@ async function fetchNoteArticles(): Promise<Article[]> {
     if (!res.ok) return [];
     const text = await res.text();
     const items = [...text.matchAll(/<item>([\s\S]*?)<\/item>/g)];
-    return items.slice(0, 4).map((m) => {
+    return items.slice(0, 6).map((m) => {
       const content = m[1];
-      // note RSS uses both CDATA and plain title
+
       const title =
         content.match(/<title><!\[CDATA\[([\s\S]*?)\]\]><\/title>/)?.[1] ??
         content.match(/<title>([\s\S]*?)<\/title>/)?.[1] ??
         "";
+
       const url =
         content.match(/<link>([\s\S]*?)<\/link>/)?.[1] ??
         content.match(/<guid[^>]*>([\s\S]*?)<\/guid>/)?.[1] ??
         "";
+
       const date = content.match(/<pubDate>([\s\S]*?)<\/pubDate>/)?.[1] ?? "";
       const dateStr = date ? new Date(date).toLocaleDateString("ja-JP") : "";
-      return { title: title.trim(), url: url.trim(), date: dateStr };
+
+      // Try multiple thumbnail sources
+      const thumbnail =
+        content.match(/<media:thumbnail[^>]+url="([^"]+)"/)?.[1] ??
+        content.match(/<enclosure[^>]+url="([^"]+)"/)?.[1] ??
+        content.match(/<description>[^<]*<img[^>]+src="([^"]+)"/)?.[1] ??
+        content.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp)[^\s"'<>]*/i)?.[1] ??
+        "";
+
+      return { title: title.trim(), url: url.trim(), date: dateStr, thumbnail };
     }).filter((a) => a.title && a.url);
   } catch {
     return [];
@@ -66,21 +78,45 @@ export default async function Writing() {
           </a>
         </div>
       ) : (
-        <div className="space-y-2">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {articles.map((a) => (
             <a
               key={a.url}
               href={a.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="tech-card flex items-start justify-between py-4 px-5 rounded-xl group"
+              className="tech-card rounded-2xl overflow-hidden group flex flex-col"
             >
-              <p className="text-sm text-[#7a9cc4] group-hover:text-[#e8f0fe] transition-colors leading-relaxed pr-8">
-                {a.title}
-              </p>
-              <p className="text-xs font-mono text-[#3d5a7a] whitespace-nowrap mt-0.5">
-                {a.date}
-              </p>
+              {/* Thumbnail */}
+              <div className="relative w-full aspect-[16/9] bg-[#111927] overflow-hidden">
+                {a.thumbnail ? (
+                  /* eslint-disable-next-line @next/next/no-img-element */
+                  <img
+                    src={a.thumbnail}
+                    alt={a.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <span className="text-3xl opacity-20">✍</span>
+                  </div>
+                )}
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#080c14]/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+
+              {/* Content */}
+              <div className="p-4 flex flex-col flex-1">
+                <p className="text-sm font-medium text-[#e8f0fe] leading-snug mb-3 group-hover:text-[#00d4ff] transition-colors duration-200 line-clamp-2">
+                  {a.title}
+                </p>
+                <div className="mt-auto flex items-center justify-between">
+                  <p className="text-xs font-mono text-[#3d5a7a]">{a.date}</p>
+                  <span className="text-xs font-mono text-[#3d5a7a] group-hover:text-[#00d4ff] transition-colors">
+                    読む →
+                  </span>
+                </div>
+              </div>
             </a>
           ))}
         </div>
