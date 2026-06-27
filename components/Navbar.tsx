@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 
 const links = [
   { href: "#about", label: "About" },
@@ -45,6 +46,14 @@ export default function Navbar() {
               </a>
             </li>
           ))}
+          <li>
+            <Link
+              href="/ai-fundamentals"
+              className="text-xs font-mono px-3 py-1.5 text-[#00ff9d] hover:text-[#00d4ff] hover:bg-[rgba(0,212,255,0.06)] rounded transition-all duration-200 border border-[#00ff9d]/30 hover:border-[#00d4ff]/30 ml-1"
+            >
+              AI基礎
+            </Link>
+          </li>
         </ul>
       </nav>
     </header>
