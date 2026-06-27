@@ -463,9 +463,6 @@ export default function AiFundamentals() {
 
         {/* Footer note */}
         <div className="mt-20 pt-8 border-t border-[#1e2d42] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <p className="text-xs font-mono text-[#3d5a7a]">
-            最終更新: 2025年
-          </p>
           <Link
             href="/"
             className="text-xs font-mono text-[#7a9cc4] hover:text-[#00d4ff] transition-colors flex items-center gap-1"
