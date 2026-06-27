@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
 
@@ -254,6 +255,96 @@ const sections: Section[] = [
   },
 ];
 
+function AiVennDiagram() {
+  return (
+    <div className="tech-card rounded-2xl p-5 my-8" style={{ borderColor: "rgba(0,212,255,0.15)" }}>
+      <p className="text-xs font-mono text-[#3d5a7a] mb-4 text-center tracking-widest uppercase">AI · ML · DL の包含関係</p>
+      <svg
+        viewBox="0 0 480 310"
+        className="w-full max-w-md mx-auto block"
+        aria-label="人工知能・機械学習・深層学習の包含関係を示すベン図"
+      >
+        {/* AI outer circle */}
+        <circle cx="240" cy="170" r="130" fill="rgba(0,212,255,0.04)" stroke="#00d4ff" strokeWidth="1.5" strokeDasharray="5 3" />
+        {/* ML middle circle */}
+        <circle cx="240" cy="170" r="86" fill="rgba(0,255,157,0.06)" stroke="#00ff9d" strokeWidth="1.5" strokeDasharray="5 3" />
+        {/* DL inner circle */}
+        <circle cx="240" cy="170" r="46" fill="rgba(167,139,250,0.14)" stroke="#a78bfa" strokeWidth="1.5" />
+
+        {/* AI label — top of outer ring */}
+        <text x="240" y="52" textAnchor="middle" fill="#00d4ff" fontSize="12" fontFamily="monospace" fontWeight="600">人工知能 (AI)</text>
+        <text x="240" y="68" textAnchor="middle" fill="#3d6a8a" fontSize="9" fontFamily="monospace">ルールベース・エキスパートシステム</text>
+
+        {/* ML label — top of ML ring */}
+        <text x="240" y="101" textAnchor="middle" fill="#00ff9d" fontSize="11" fontFamily="monospace" fontWeight="600">機械学習 (ML)</text>
+        <text x="240" y="115" textAnchor="middle" fill="#2a5a3a" fontSize="9" fontFamily="monospace">決定木 · SVM · 線形回帰 · k-NN</text>
+
+        {/* DL label — center */}
+        <text x="240" y="163" textAnchor="middle" fill="#a78bfa" fontSize="11" fontFamily="monospace" fontWeight="600">深層学習 (DL)</text>
+        <text x="240" y="178" textAnchor="middle" fill="#6b5a9a" fontSize="9" fontFamily="monospace">CNN · RNN · Transformer</text>
+
+        {/* Bottom zone annotations */}
+        <text x="240" y="238" textAnchor="middle" fill="#1a4a5a" fontSize="8" fontFamily="monospace">← 学習パラダイムの広さ →</text>
+        <text x="100" y="258" textAnchor="middle" fill="#3d5a7a" fontSize="8" fontFamily="monospace">広義のAI</text>
+        <text x="240" y="258" textAnchor="middle" fill="#3d5a7a" fontSize="8" fontFamily="monospace">統計的ML</text>
+        <text x="358" y="258" textAnchor="middle" fill="#3d5a7a" fontSize="8" fontFamily="monospace">DL</text>
+      </svg>
+    </div>
+  );
+}
+
+function MlTypesDiagram() {
+  return (
+    <div className="tech-card rounded-2xl p-5 my-8" style={{ borderColor: "rgba(0,255,157,0.15)" }}>
+      <p className="text-xs font-mono text-[#3d5a7a] mb-4 text-center tracking-widest uppercase">学習タイプの分類</p>
+      <svg
+        viewBox="0 0 560 220"
+        className="w-full max-w-xl mx-auto block"
+        aria-label="機械学習の3つの学習タイプ：教師あり学習・教師なし学習・強化学習"
+      >
+        {/* Supervised — left */}
+        <circle cx="130" cy="110" r="85" fill="rgba(0,212,255,0.06)" stroke="#00d4ff" strokeWidth="1.5" />
+        {/* Unsupervised — center-left, overlaps with supervised */}
+        <circle cx="255" cy="110" r="85" fill="rgba(0,255,157,0.06)" stroke="#00ff9d" strokeWidth="1.5" />
+        {/* Reinforcement — right, separate */}
+        <circle cx="455" cy="110" r="80" fill="rgba(245,158,11,0.06)" stroke="#f59e0b" strokeWidth="1.5" />
+
+        {/* Supervised label (left zone only) */}
+        <text x="83" y="98" textAnchor="middle" fill="#00d4ff" fontSize="10" fontFamily="monospace" fontWeight="600">教師あり学習</text>
+        <text x="83" y="112" textAnchor="middle" fill="#00d4ff" fontSize="9" fontFamily="monospace">Supervised</text>
+        <text x="83" y="130" textAnchor="middle" fill="#2a4a5a" fontSize="8" fontFamily="monospace">分類・回帰</text>
+        <text x="83" y="141" textAnchor="middle" fill="#2a4a5a" fontSize="8" fontFamily="monospace">SVM / 決定木</text>
+
+        {/* Overlap zone — semi-supervised */}
+        <text x="193" y="104" textAnchor="middle" fill="#7a9cc4" fontSize="9" fontFamily="monospace">半教師</text>
+        <text x="193" y="116" textAnchor="middle" fill="#7a9cc4" fontSize="9" fontFamily="monospace">あり学習</text>
+
+        {/* Unsupervised label (right zone only) */}
+        <text x="307" y="98" textAnchor="middle" fill="#00ff9d" fontSize="10" fontFamily="monospace" fontWeight="600">教師なし学習</text>
+        <text x="307" y="112" textAnchor="middle" fill="#00ff9d" fontSize="9" fontFamily="monospace">Unsupervised</text>
+        <text x="307" y="130" textAnchor="middle" fill="#1a4a2a" fontSize="8" fontFamily="monospace">クラスタリング</text>
+        <text x="307" y="141" textAnchor="middle" fill="#1a4a2a" fontSize="8" fontFamily="monospace">次元削減</text>
+
+        {/* Reinforcement — separate */}
+        <text x="455" y="98" textAnchor="middle" fill="#f59e0b" fontSize="10" fontFamily="monospace" fontWeight="600">強化学習</text>
+        <text x="455" y="112" textAnchor="middle" fill="#f59e0b" fontSize="9" fontFamily="monospace">Reinforcement</text>
+        <text x="455" y="130" textAnchor="middle" fill="#4a3a0a" fontSize="8" fontFamily="monospace">報酬最大化</text>
+        <text x="455" y="141" textAnchor="middle" fill="#4a3a0a" fontSize="8" fontFamily="monospace">AlphaGo / RLHF</text>
+
+        {/* Gap indicator between U and R */}
+        <line x1="343" y1="110" x2="373" y2="110" stroke="#1e2d42" strokeWidth="1" strokeDasharray="3 2" />
+        <text x="358" y="106" textAnchor="middle" fill="#2a3f5a" fontSize="7" fontFamily="monospace">別</text>
+        <text x="358" y="117" textAnchor="middle" fill="#2a3f5a" fontSize="7" fontFamily="monospace">軸</text>
+      </svg>
+    </div>
+  );
+}
+
+const sectionDiagrams: Record<string, ReactNode> = {
+  "what-is-ai": <AiVennDiagram />,
+  "ml-basics": <MlTypesDiagram />,
+};
+
 function SectionCard({ section }: { section: Section }) {
   return (
     <article id={section.id} className="scroll-mt-20">
@@ -266,6 +357,8 @@ function SectionCard({ section }: { section: Section }) {
       </div>
 
       <p className="text-sm text-[#7a9cc4] leading-relaxed mb-6 max-w-3xl">{section.intro}</p>
+
+      {sectionDiagrams[section.id] ?? null}
 
       <div className="grid sm:grid-cols-2 gap-4">
         {section.items.map(({ term, desc }) => (
